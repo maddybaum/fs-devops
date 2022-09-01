@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
 const path = require('path')
+const cors = require('cors')
+
+app.use(cors())
 
 app.use(express.json())
 
@@ -21,10 +24,12 @@ const restaurants = ['Taco Bell', 'Ramen Nagi', 'McDonalds']
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'))
+    rollbar.log('accessed HTML successfully')
 })
 
 app.get('/api/restaurants', (req, res) => {
     res.status(200).send(restaurants)
+    rollbar.info('Someone got the restaurants to pull up')
 })
 
 app.post('/api/restaurants', (req, res) => {
@@ -37,6 +42,7 @@ app.post('/api/restaurants', (req, res) => {
    try {
        if (index === -1 && name !== '') {
         restaurants.push(name)
+        rollbar.log('student added successfully', {author: "Maddy"})
            res.status(200).send(restaurant)
        } else if (name === ''){
            res.status(400).send('You must enter a name.')
@@ -48,7 +54,7 @@ app.post('/api/restaurants', (req, res) => {
    }
 })
 
-app.delete('/api/restaurnts/:index', (req, res) => {
+app.delete('/api/restaurants/:index', (req, res) => {
     const targetIndex = +req.params.index
     
     restaurants.splice(targetIndex, 1)
